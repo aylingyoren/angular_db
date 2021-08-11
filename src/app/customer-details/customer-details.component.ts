@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { Customer } from '../shared/customer';
 import { HttpService } from '../shared/http.service';
 
@@ -8,9 +9,23 @@ import { HttpService } from '../shared/http.service';
   styleUrls: ['./customer-details.component.scss'],
 })
 export class CustomerDetailsComponent implements OnInit {
-  constructor(public svc: HttpService) {}
+  form = this.fb.group({
+    name: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    mobile: ['', [Validators.required, Validators.minLength(8)]],
+    location: ['', [Validators.required]],
+  });
+
+  name: AbstractControl;
+  email: AbstractControl;
+  mobile: AbstractControl;
+  location: AbstractControl;
+
+  constructor(public svc: HttpService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.createControls();
+
     // const tempCustomer: Customer = {
     //   name: 'Kate',
     //   email: 'kate@example.com',
@@ -18,5 +33,24 @@ export class CustomerDetailsComponent implements OnInit {
     //   location: 'Kiev',
     // };
     // this.svc.createData(tempCustomer);
+  }
+
+  onSubmit(): void {
+    console.log(this.form.value);
+    if (this.form.value) {
+      this.svc.createData(this.form.value);
+    }
+  }
+
+  private createControls(): void {
+    this.name = this.form.controls.name;
+    this.email = this.form.controls.email;
+    this.mobile = this.form.controls.mobile;
+    this.location = this.form.controls.location;
+
+    this.name.setValue('Jean');
+    this.email.setValue('jean@gmail.com');
+    this.mobile.setValue('987654321');
+    this.location.setValue('Berlin');
   }
 }

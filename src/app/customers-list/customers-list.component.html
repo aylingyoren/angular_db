@@ -1,1 +1,72 @@
-<p>customers-list works!</p>
+<h2 class="py-3">Customers List</h2>
+
+<table class="table">
+  <ng-container *ngTemplateOutlet="tableHeadBlock"></ng-container>
+  <tbody>
+    <tr *ngFor="let customer of svc.customers; let i = index">
+      <th scope="row">{{ i + 1 }}</th>
+      <ng-container
+        *ngTemplateOutlet="bodyBlock; context: { $implicit: customer }"
+      >
+      </ng-container>
+
+      <ng-container
+        *ngTemplateOutlet="
+          customerControlsBlock;
+          context: { customer: customer, index: i }
+        "
+      ></ng-container>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #tableHeadBlock>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Cell</th>
+      <th scope="col">City</th>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #bodyBlock let-customer>
+  <td>{{ customer.name }}</td>
+  <td>{{ customer.email }}</td>
+  <td>{{ customer.mobile }}</td>
+  <td>{{ customer.location }}</td>
+</ng-template>
+
+<ng-template #customerControlsBlock let-customer="customer" let-i="index">
+  <td>
+    <button
+      class="btn btn-outline-info btn-sm ms-2"
+      *ngIf="isEditPos !== i"
+      (click)="editCustomer(i)"
+    >
+      <i class="fas fa-edit"></i>
+    </button>
+    <button
+      class="btn btn-outline-info btn-sm ms-2"
+      *ngIf="isEditPos === i"
+      (click)="cancelEdit()"
+    >
+      <i class="fas fa-undo"></i>
+    </button>
+    <button
+      class="btn btn-outline-info btn-sm ms-2"
+      *ngIf="isEditPos === i"
+      (click)="saveCustomer(customer)"
+    >
+      <i class="fas fa-save"></i>
+    </button>
+    <button
+      class="btn btn-outline-info btn-sm ms-2"
+      (click)="deleteCustomer(customer)"
+    >
+      <i class="fas fa-trash"></i>
+    </button>
+  </td>
+</ng-template>
