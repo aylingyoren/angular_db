@@ -6,7 +6,10 @@
     <tr *ngFor="let customer of svc.customers; let i = index">
       <th scope="row">{{ i + 1 }}</th>
       <ng-container
-        *ngTemplateOutlet="bodyBlock; context: { $implicit: customer }"
+        *ngTemplateOutlet="
+          isEditPos === i ? thenBlock : elseBlock;
+          context: { $implicit: customer }
+        "
       >
       </ng-container>
 
@@ -32,7 +35,42 @@
   </thead>
 </ng-template>
 
-<ng-template #bodyBlock let-customer>
+<ng-template #thenBlock let-customer>
+  <td>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      value="{{ customer.name }}"
+      (blur)="setValue('name', $event.target.value, customer.name)"
+    />
+  </td>
+  <td>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      value="{{ customer.email }}"
+      (blur)="setValue('email', $event.target.value, customer.email)"
+    />
+  </td>
+  <td>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      value="{{ customer.mobile }}"
+      (blur)="setValue('mobile', $event.target.value, customer.mobile)"
+    />
+  </td>
+  <td>
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      value="{{ customer.location }}"
+      (blur)="setValue('location', $event.target.value, customer.location)"
+    />
+  </td>
+</ng-template>
+
+<ng-template #elseBlock let-customer>
   <td>{{ customer.name }}</td>
   <td>{{ customer.email }}</td>
   <td>{{ customer.mobile }}</td>
@@ -58,7 +96,7 @@
     <button
       class="btn btn-outline-info btn-sm ms-2"
       *ngIf="isEditPos === i"
-      (click)="saveCustomer(customer)"
+      (click)="saveCustomer(customer, i)"
     >
       <i class="fas fa-save"></i>
     </button>

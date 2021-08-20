@@ -49,10 +49,27 @@ export class HttpService {
   }
 
   //Update = PUT / PATCH
-  update(customer: Customer): any {}
+  update(customer: Customer, i: number): any {
+    const { key, ...data } = customer;
+
+    return this.http
+      .put<Customer>(`${url}/${key}.json`, data, httpOptions)
+      .subscribe(() => {
+        // this.customers[i] = mergeCustomer;
+        this.customers[i] = customer;
+      }, catchError(this.errorHandler<Customer[]>('PUT')));
+  }
 
   // Delete = DELETE
-  delete(customer: Customer): void {}
+  delete(customer: Customer): void {
+    //siteurl/customers/userID.json
+    this.http
+      .delete<void>(`${url}/${customer.key}.json`, httpOptions)
+      .subscribe(
+        () => this.customers.splice(this.customers.indexOf(customer), 1),
+        catchError(this.errorHandler<Customer>('DELETE'))
+      );
+  }
 
   private errorHandler<T>(operation: string, res?: T): any {
     return (err: any): Observable<T> => {
